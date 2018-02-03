@@ -50,6 +50,16 @@ public class MainActivity extends ListActivity {
      */
     private SharedPreferences sharedPreferences;
 
+    /**
+     * Text field in the UI for the name of the activity
+     */
+    private EditText notificationName;
+
+    /**
+     * Text filed in the UI for the minutes interval of the activity
+     */
+    private EditText notificationInterval;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +72,9 @@ public class MainActivity extends ListActivity {
                 addNotification();
             }
         });
+
+        notificationName = (EditText)findViewById(R.id.notificationName);
+        notificationInterval = (EditText)findViewById(R.id.intervalNumber);
 
         //1. get activities from memory and show on UI
         getActivities();
@@ -208,5 +221,8 @@ public class MainActivity extends ListActivity {
 
         showActivitiesOnUI();
         saveActivities();
+
+        notificationName.getText().clear();
+        notificationInterval.getText().clear();
     }
 }
