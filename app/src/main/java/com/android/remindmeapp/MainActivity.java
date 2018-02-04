@@ -95,6 +95,7 @@ public class MainActivity extends ListActivity {
         activitiesOnListView = new ArrayList<String>();
         for (Activity ac:activities)
         {
+            ac.setPosition(-1);
             activitiesOnListView.add(ac.toString());
             addScheduler(ac);
         }
@@ -126,6 +127,7 @@ public class MainActivity extends ListActivity {
      */
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
+
         String item = (String) getListAdapter().getItem(position);
         String[] splited = item.split("-");
 
@@ -144,15 +146,19 @@ public class MainActivity extends ListActivity {
     }
 
     private void deleteNotification(){
-        for(Activity act : activities) {
-            if (act.getPosition() != -1) {
-                activities.remove(act.getPosition());
+        for(int i = 0; i< activities.size(); i++) {
+            Activity act = activities.get(i);
+            if (act.getName().contentEquals(this.notificationName.getText())) {
+                activities.remove(i);
                 activitiesOnListView.remove(act.toString());
-                saveActivities();
-                getActivities();
-                showActivitiesOnUI();
+
             }
         }
+
+        saveActivities();
+        getActivities();
+        showActivitiesOnUI();
+
         notificationName.getText().clear();
         notificationInterval.getText().clear();
     }
@@ -190,7 +196,7 @@ public class MainActivity extends ListActivity {
     {
         MyTimerTask myTask = new MyTimerTask(activity.getName());
         Timer myTimer = new Timer();
-        myTimer.schedule(myTask, 5000, activity.getIntervalMinutes());
+        myTimer.schedule(myTask, 0, activity.getIntervalMinutes());
     }
 
     private void getActivities()
@@ -238,7 +244,7 @@ public class MainActivity extends ListActivity {
                 PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setContentIntent(contentIntent);
 
-        // Add as notification
+//        // Add as notification
         NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         manager.notify(0, builder.build());
 
@@ -249,7 +255,7 @@ public class MainActivity extends ListActivity {
         String intervalTime = editTextForIntervalTime.getText().toString();
 
         boolean edit = false;
-
+        // edit selected activity
         for(Activity act : activities) {
             if (act.getPosition() != -1) {
                 edit = true;
