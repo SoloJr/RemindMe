@@ -61,14 +61,22 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center">
+        android:gravity="center_horizontal">
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Add activity"
+            android:text="Save activity"
             android:id="@+id/button"
+            android:layout_gravity="left"
 />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Delete activity"
+            android:id="@+id/buttonDelete"
+            android:layout_gravity="right"
+            />
 
     </LinearLayout>
 
@@ -80,7 +88,8 @@
         <ListView
             android:id="@android:id/list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"></ListView>
+            android:layout_height="match_parent">
+        </ListView>
 
     </LinearLayout>
 

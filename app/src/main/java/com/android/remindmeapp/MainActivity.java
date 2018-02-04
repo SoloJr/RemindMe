@@ -28,7 +28,9 @@ import java.util.TimerTask;
 
 public class MainActivity extends ListActivity {
 
-    private Button btnAddActivity;
+    private Button btnAddActivity, btnDeleteActivity;
+
+    private int increment = 1;
 
     /**
      * Activities
@@ -60,6 +62,8 @@ public class MainActivity extends ListActivity {
      */
     private EditText notificationInterval;
 
+    private boolean isEdited = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,6 +74,14 @@ public class MainActivity extends ListActivity {
             @Override
             public void onClick(View v) {
                 addNotification();
+            }
+        });
+
+        btnDeleteActivity = (Button) findViewById(R.id.buttonDelete);
+        btnDeleteActivity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteNotification();
             }
         });
 
@@ -106,7 +118,7 @@ public class MainActivity extends ListActivity {
     }
 
     /**
-     * Delete activity on click
+     * Edit activity on click
      * @param l
      * @param v
      * @param position
@@ -115,11 +127,34 @@ public class MainActivity extends ListActivity {
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         String item = (String) getListAdapter().getItem(position);
-        activities.remove(position);
-        activitiesOnListView.remove(item);
-        showActivitiesOnUI();
-        saveActivities();
-        Toast.makeText(this, item + " deleted", Toast.LENGTH_LONG).show();
+        String[] splited = item.split("-");
+
+        this.notificationName.setText(splited[0]);
+        this.notificationInterval.setText(splited[1]);
+
+        for(Activity act : activities)
+        {
+            if(act.getName().contentEquals(splited[0])){
+                act.setPosition(position);
+            }
+            else {
+                act.setPosition(-1);
+            }
+        }
+    }
+
+    private void deleteNotification(){
+        for(Activity act : activities) {
+            if (act.getPosition() != -1) {
+                activities.remove(act.getPosition());
+                activitiesOnListView.remove(act.toString());
+                saveActivities();
+                getActivities();
+                showActivitiesOnUI();
+            }
+        }
+        notificationName.getText().clear();
+        notificationInterval.getText().clear();
     }
 
     private void generateNotification(Context context, String message) {
@@ -193,11 +228,10 @@ public class MainActivity extends ListActivity {
     }
 
     private void addNotification() {
+
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.ic_small_notification);
-           //             .setContentTitle("Notifications Example")
-             //           .setContentText("This is a test notification");
 
         Intent notificationIntent = new Intent(this, MainActivity.class);
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent,
@@ -214,14 +248,29 @@ public class MainActivity extends ListActivity {
         EditText editTextForIntervalTime = (EditText) findViewById(R.id.intervalNumber);
         String intervalTime = editTextForIntervalTime.getText().toString();
 
+        boolean edit = false;
+
+        for(Activity act : activities) {
+            if (act.getPosition() != -1) {
+                edit = true;
+                act.setName(activityName);
+                act.setIntervalMinutes(Integer.parseInt(intervalTime));
+                activitiesOnListView.set(act.getPosition(), act.toString());
+                act.setPosition(-1);
+
+            }
+        }
+
         //add activity to list
-        Activity activity = (new Activity(activityName, Integer.parseInt(intervalTime)));
-        activities.add(activity);
-        activitiesOnListView.add(activity.toString());
+        if(edit == false) {
+            Activity activity = (new Activity(activityName, Integer.parseInt(intervalTime)));
+            activities.add(activity);
+            activitiesOnListView.add(activity.toString());
+        }
 
-        showActivitiesOnUI();
         saveActivities();
-
+        getActivities();
+        showActivitiesOnUI();
         notificationName.getText().clear();
         notificationInterval.getText().clear();
     }

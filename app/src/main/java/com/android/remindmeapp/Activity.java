@@ -6,6 +6,7 @@ package com.android.remindmeapp;
 
 public class Activity {
 
+    private int position;
     private String name;
     private int intervalMinutes;
 
@@ -13,7 +14,12 @@ public class Activity {
     {
         this.name = name;
         this.intervalMinutes = intervalMinutes * 1000 * 60;
+        this.position = -1;
     }
+
+    public int getPosition() {return this.position;}
+
+    public void setPosition(int position) {this.position = position;}
 
     public String getName()
     {
@@ -37,6 +43,6 @@ public class Activity {
 
     @Override
     public String toString() {
-        return name + " " + (intervalMinutes / 1000 / 60);
+        return name + "-" + (intervalMinutes / 1000 / 60);
     }
 }
